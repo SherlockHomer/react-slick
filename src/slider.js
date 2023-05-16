@@ -50,6 +50,7 @@ export default class Slider extends React.Component {
           });
         }
         // when not using server side rendering
+        // 媒体查询 js 方式监听，监听回调设置当前 breakpoint
         canUseDOM() &&
           this.media(bQuery, () => {
             this.setState({ breakpoint: breakpoint });
@@ -87,10 +88,12 @@ export default class Slider extends React.Component {
   render() {
     var settings;
     var newProps;
+    // 取出当前断点对应的 responsive-setting，覆盖当前的 settings
     if (this.state.breakpoint) {
       newProps = this.props.responsive.filter(
         resp => resp.breakpoint === this.state.breakpoint
       );
+      // 覆盖当前的 settings，从而往下触发 inner-slider 的重新渲染
       settings =
         newProps[0].settings === "unslick"
           ? "unslick"
@@ -113,6 +116,7 @@ export default class Slider extends React.Component {
     }
     // force showing one slide and scrolling by one if the fade mode is on
     if (settings.fade) {
+      // fade 动画只能一个
       if (settings.slidesToShow > 1 && process.env.NODE_ENV !== "production") {
         console.warn(
           `slidesToShow should be equal to 1 when fade is true, you're using ${settings.slidesToShow}`
@@ -154,23 +158,29 @@ export default class Slider extends React.Component {
     }
     let newChildren = [];
     let currentWidth = null;
+    // 网格模式，一页 nm 个
     for (
       let i = 0;
       i < children.length;
       i += settings.rows * settings.slidesPerRow
     ) {
       let newSlide = [];
+      // 取 一页中n行m列，取 nm个，即 rows * slidesPerRow
+      // 分行
       for (
         let j = i;
         j < i + settings.rows * settings.slidesPerRow;
         j += settings.slidesPerRow
       ) {
         let row = [];
+        // 取一行的 m 个
+        // 分行中每一个
         for (let k = j; k < j + settings.slidesPerRow; k += 1) {
           if (settings.variableWidth && children[k].props.style) {
             currentWidth = children[k].props.style.width;
           }
           if (k >= children.length) break;
+          // 对单个设置百分比样式，放到 row 中
           row.push(
             React.cloneElement(children[k], {
               key: 100 * i + 10 * j + k,
@@ -184,6 +194,7 @@ export default class Slider extends React.Component {
         }
         newSlide.push(<div key={10 * i + j}>{row}</div>);
       }
+      // 每个元素宽度不统一
       if (settings.variableWidth) {
         newChildren.push(
           <div key={i} style={{ width: currentWidth }}>

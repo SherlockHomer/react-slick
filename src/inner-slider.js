@@ -37,7 +37,7 @@ export class InnerSlider extends React.Component {
       currentSlide: this.props.initialSlide,
       slideCount: React.Children.count(this.props.children)
     };
-    this.callbackTimers = [];
+    this.callbackTimers = []; // 方便清空所有的延迟任务
     this.clickable = true;
     this.debouncedResize = null;
     const ssrState = this.ssrInit();
@@ -77,6 +77,7 @@ export class InnerSlider extends React.Component {
     if (this.props.lazyLoad === "progressive") {
       this.lazyLoadTimer = setInterval(this.progressiveLazyLoad, 1000);
     }
+    // 监控 list transition 动画
     this.ro = new ResizeObserver(() => {
       if (this.state.animating) {
         this.onWindowResized(false); // don't set trackStyle hence don't break animation
@@ -87,6 +88,7 @@ export class InnerSlider extends React.Component {
         this.onWindowResized();
       }
     });
+    // 监听 list dom 有没有变化
     this.ro.observe(this.list);
     document.querySelectorAll &&
       Array.prototype.forEach.call(
@@ -239,6 +241,7 @@ export class InnerSlider extends React.Component {
     this.setState(updatedState, callback);
   };
 
+  // 给 ssr 环境的初始数据，没有判断 fade 模式 getPreClones等
   ssrInit = () => {
     if (this.props.variableWidth) {
       let trackWidth = 0,
@@ -304,7 +307,8 @@ export class InnerSlider extends React.Component {
   };
   checkImagesLoad = () => {
     let images =
-      (this.list && this.list.querySelectorAll &&
+      (this.list &&
+        this.list.querySelectorAll &&
         this.list.querySelectorAll(".slick-slide img")) ||
       [];
     let imagesCount = images.length,
@@ -316,7 +320,7 @@ export class InnerSlider extends React.Component {
         image.onclick = () => image.parentNode.focus();
       } else {
         const prevClickHandler = image.onclick;
-        image.onclick = (e) => {
+        image.onclick = e => {
           prevClickHandler(e);
           image.parentNode.focus();
         };
@@ -538,6 +542,7 @@ export class InnerSlider extends React.Component {
     );
   };
   play = () => {
+    // 计算当前是要哪一页要滚动
     var nextIndex;
     if (this.props.rtl) {
       nextIndex = this.state.currentSlide - this.props.slidesToScroll;
@@ -574,6 +579,7 @@ export class InnerSlider extends React.Component {
         return;
       }
     }
+    // autoplaySpeed : Delay between each auto scroll
     this.autoplayTimer = setInterval(this.play, this.props.autoplaySpeed + 50);
     this.setState({ autoplaying: "playing" });
   };

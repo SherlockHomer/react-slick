@@ -6,10 +6,10 @@ export function clamp(number, lowerBound, upperBound) {
 
 export const safePreventDefault = event => {
   const passiveEvents = ["onTouchStart", "onTouchMove", "onWheel"];
-  if(!passiveEvents.includes(event._reactName)) {
+  if (!passiveEvents.includes(event._reactName)) {
     event.preventDefault();
   }
-}
+};
 
 export const getOnDemandLazySlides = spec => {
   let onDemandSlides = [];
@@ -114,6 +114,7 @@ export const initializedState = spec => {
   const trackNode = spec.trackRef && spec.trackRef.node;
   let trackWidth = Math.ceil(getWidth(trackNode));
   let slideWidth;
+  // 开始获取 slideWidth
   if (!spec.vertical) {
     let centerPaddingAdj = spec.centerMode && parseInt(spec.centerPadding) * 2;
     if (
@@ -225,6 +226,7 @@ export const slideHandler = spec => {
 
     animationLeft = getTrackLeft({ ...spec, slideIndex: animationSlide });
     finalLeft = getTrackLeft({ ...spec, slideIndex: finalSlide });
+    // todo: ???
     if (!infinite) {
       if (animationLeft === finalLeft) animationSlide = finalSlide;
       animationLeft = finalLeft;
@@ -386,9 +388,12 @@ export const swipeMove = (e, spec) => {
   let touchSwipeLength = touchObject.swipeLength;
   if (!infinite) {
     if (
-      (currentSlide === 0 && (swipeDirection === "right" || swipeDirection === "down")) ||
-      (currentSlide + 1 >= dotCount && (swipeDirection === "left" || swipeDirection === "up")) ||
-      (!canGoNext(spec) && (swipeDirection === "left" || swipeDirection === "up"))
+      (currentSlide === 0 &&
+        (swipeDirection === "right" || swipeDirection === "down")) ||
+      (currentSlide + 1 >= dotCount &&
+        (swipeDirection === "left" || swipeDirection === "up")) ||
+      (!canGoNext(spec) &&
+        (swipeDirection === "left" || swipeDirection === "up"))
     ) {
       touchSwipeLength = touchObject.swipeLength * edgeFriction;
       if (edgeDragged === false && onEdge) {

@@ -3,6 +3,7 @@
     "@babel/preset-env",
     "@babel/preset-react"
   ],
+  // babel7 要转换为 umd 则在这里加 @babel/plugin-transform-modules-umd
   "plugins": [
     "@babel/plugin-proposal-class-properties"
   ]
